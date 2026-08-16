@@ -27,11 +27,20 @@ OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "raw")
 # サーバに負荷をかけないよう1リクエストごとに待つ秒数
 DELAY = 1.0
 
-UA = "Mozilla/5.0 (compatible; personal-wiki-backup/1.0; owner-initiated)"
+# atwiki は bot 風の User-Agent を 403 で弾くので、通常のブラウザと同じヘッダを送る
+HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+        "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+    ),
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "ja,en-US;q=0.9,en;q=0.8",
+    "Referer": BASE + "/",
+}
 
 
 def get(url):
-    req = urllib.request.Request(url, headers={"User-Agent": UA})
+    req = urllib.request.Request(url, headers=HEADERS)
     with urllib.request.urlopen(req, timeout=30) as res:
         return res.read()
 
