@@ -1,0 +1,270 @@
+:root {
+  --bg: #ffffff;
+  --bg-soft: #f6f7f9;
+  --bg-sidebar: #fafbfc;
+  --text: #1c1e21;
+  --text-muted: #626873;
+  --border: #e2e5ea;
+  --accent: #b3123c;
+  --accent-soft: #fdeef2;
+  --th-bg: #eef0f3;
+  --sidebar-w: 17rem;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #16181c;
+    --bg-soft: #1e2126;
+    --bg-sidebar: #1a1d21;
+    --text: #e6e8eb;
+    --text-muted: #9aa1ac;
+    --border: #2c3038;
+    --accent: #ff7d9e;
+    --accent-soft: #2a1a20;
+    --th-bg: #24272d;
+    color-scheme: dark;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Hiragino Kaku Gothic ProN",
+    "Noto Sans JP", "Yu Gothic", Meiryo, sans-serif;
+  line-height: 1.85;
+  font-size: 16px;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+/* ---------- レイアウト ---------- */
+
+.layout {
+  display: flex;
+  min-width: 0;
+}
+
+.sidebar {
+  width: var(--sidebar-w);
+  flex: 0 0 var(--sidebar-w);
+  border-right: 1px solid var(--border);
+  background: var(--bg-sidebar);
+  padding: 1.5rem 1rem 4rem;
+  height: 100dvh;
+  position: sticky;
+  top: 0;
+  overflow-y: auto;
+}
+
+.site-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.5;
+  margin: 0 0 1.25rem;
+  color: var(--text);
+}
+.site-title a {
+  color: inherit;
+}
+
+.nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.nav > ul > li {
+  margin-bottom: 0.4rem;
+}
+.nav ul ul {
+  margin-left: 0.85rem;
+  border-left: 1px solid var(--border);
+  padding-left: 0.6rem;
+}
+.nav a {
+  display: block;
+  padding: 0.28rem 0.5rem;
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+.nav a:hover {
+  background: var(--bg-soft);
+  text-decoration: none;
+}
+.nav a[aria-current="page"] {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.main {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 2.5rem 2.5rem 6rem;
+  max-width: 62rem;
+}
+
+/* ---------- 検索 ---------- */
+
+.search-box {
+  width: 100%;
+  padding: 0.5rem 0.7rem;
+  margin-bottom: 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.9rem;
+}
+.search-box:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
+
+.search-result {
+  border-bottom: 1px solid var(--border);
+  padding: 1rem 0;
+}
+.search-result h3 {
+  margin: 0 0 0.35rem;
+  font-size: 1.05rem;
+}
+.search-result p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+.search-result mark {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 700;
+  padding: 0 0.1em;
+  border-radius: 3px;
+}
+
+/* ---------- 本文 ---------- */
+
+.prose h1 {
+  font-size: 1.8rem;
+  line-height: 1.4;
+  margin: 0 0 1.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--border);
+}
+.prose h2 {
+  font-size: 1.35rem;
+  margin: 2.75rem 0 1rem;
+  padding-left: 0.6rem;
+  border-left: 4px solid var(--accent);
+  line-height: 1.5;
+}
+.prose h3 {
+  font-size: 1.1rem;
+  margin: 2rem 0 0.75rem;
+  color: var(--text);
+}
+.prose p {
+  margin: 0 0 1.1rem;
+}
+.prose ul,
+.prose ol {
+  margin: 0 0 1.1rem;
+  padding-left: 1.5rem;
+}
+.prose li {
+  margin-bottom: 0.35rem;
+}
+.prose hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 2.5rem 0;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  margin: 0 0 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.prose table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.88rem;
+  line-height: 1.7;
+}
+.prose th,
+.prose td {
+  border: 1px solid var(--border);
+  padding: 0.5rem 0.7rem;
+  text-align: left;
+  vertical-align: top;
+}
+.prose th {
+  background: var(--th-bg);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.prose tr:nth-child(even) td {
+  background: var(--bg-soft);
+}
+
+/* ---------- モバイル ---------- */
+
+.menu-toggle {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .layout {
+    display: block;
+  }
+  .main {
+    padding: 1.5rem 1.1rem 5rem;
+  }
+  .sidebar {
+    position: static;
+    width: auto;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    padding: 1rem;
+  }
+  .menu-toggle {
+    display: block;
+    width: 100%;
+    padding: 0.55rem;
+    margin-top: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+  .nav {
+    display: none;
+  }
+  .nav.open {
+    display: block;
+    margin-top: 0.75rem;
+  }
+  .prose h1 {
+    font-size: 1.45rem;
+  }
+}

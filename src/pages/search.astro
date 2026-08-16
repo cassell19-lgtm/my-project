@@ -1,0 +1,91 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="検索">
+  <article class="prose">
+    <h1>検索</h1>
+    <p id="summary">検索語を入力してください。</p>
+    <div id="results"></div>
+  </article>
+</Layout>
+
+<script>
+  type Doc = { title: string; path: string; text: string };
+
+  const summary = document.getElementById("summary")!;
+  const results = document.getElementById("results")!;
+  const query = (new URLSearchParams(location.search).get("q") ?? "").trim();
+
+  // サイドバーの検索窓に今の検索語を残しておく
+  const box = document.querySelector<HTMLInputElement>(".search-box");
+  if (box) box.value = query;
+
+  const escapeHtml = (s: string) =>
+    s.replace(/[&<>"']/g, (c) => {
+      const map: Record<string, string> = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+      };
+      return map[c];
+    });
+
+  /** ヒット箇所の前後を切り出して、一致部分を強調した HTML を返す。 */
+  function snippet(text: string, at: number, len: number) {
+    const start = Math.max(0, at - 40);
+    const before = (start > 0 ? "…" : "") + text.slice(start, at);
+    const hit = text.slice(at, at + len);
+    const after = text.slice(at + len, at + len + 80);
+    return (
+      escapeHtml(before) +
+      "<mark>" +
+      escapeHtml(hit) +
+      "</mark>" +
+      escapeHtml(after) +
+      (text.length > at + len + 80 ? "…" : "")
+    );
+  }
+
+  async function run() {
+    if (!query) return;
+
+    const docs: Doc[] = await fetch("/search.json").then((r) => r.json());
+    const needle = query.toLowerCase();
+
+    const hits = docs
+      .map((doc) => {
+        const haystack = (doc.title + " " + doc.text).toLowerCase();
+        const inTitle = doc.title.toLowerCase().includes(needle);
+        const at = doc.text.toLowerCase().indexOf(needle);
+        if (!inTitle && at < 0) return null;
+        // 出現回数が多いページほど関連が高いとみなす
+        const count = haystack.split(needle).length - 1;
+        return { doc, at, count, inTitle };
+      })
+      .filter((h): h is NonNullable<typeof h> => h !== null)
+      .sort((a, b) => Number(b.inTitle) - Number(a.inTitle) || b.count - a.count);
+
+    if (hits.length === 0) {
+      summary.textContent = `「${query}」に一致するページはありませんでした。`;
+      return;
+    }
+
+    summary.textContent = `「${query}」の検索結果: ${hits.length}件`;
+    results.innerHTML = hits
+      .map(({ doc, at, count }) => {
+        const body =
+          at >= 0 ? snippet(doc.text, at, query.length) : escapeHtml(doc.text.slice(0, 120)) + "…";
+        return `<div class="search-result">
+            <h3><a href="${doc.path}">${escapeHtml(doc.title)}</a></h3>
+            <p>${body}</p>
+            <p><small>${count}件ヒット</small></p>
+          </div>`;
+      })
+      .join("");
+  }
+
+  run();
+</script>

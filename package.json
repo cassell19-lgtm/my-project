@@ -1,0 +1,17 @@
+{
+  "name": "bachelor-jp-wiki",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "predev": "node tools/copy-cms.mjs",
+    "dev": "astro dev",
+    "prebuild": "node tools/copy-cms.mjs",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@sveltia/cms": "^0.191.1",
+    "astro": "^5.6.1"
+  }
+}

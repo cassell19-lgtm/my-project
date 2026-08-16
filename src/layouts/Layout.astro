@@ -1,0 +1,109 @@
+---
+import { nav, SITE_TITLE, type NavItem } from "../nav";
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description } = Astro.props;
+const current = Astro.url.pathname;
+
+// 子孫に現在のページがあるか。あれば親のツリーを開いた状態で描画する。
+function contains(item: NavItem, path: string): boolean {
+  return item.href === path || (item.children ?? []).some((c) => contains(c, path));
+}
+
+const pageTitle = current === "/" ? SITE_TITLE : `${title} - ${SITE_TITLE}`;
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    {description && <meta name="description" content={description} />}
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='14'>🌹</text></svg>" />
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <p class="site-title"><a href="/">{SITE_TITLE}</a></p>
+
+        <form action="/search/" method="get" role="search">
+          <input
+            class="search-box"
+            type="search"
+            name="q"
+            placeholder="サイト内を検索"
+            aria-label="サイト内を検索"
+          />
+        </form>
+
+        <button class="menu-toggle" type="button" aria-expanded="false">
+          メニューを開く
+        </button>
+
+        <nav class="nav" aria-label="サイトメニュー">
+          <ul>
+            {
+              nav.map((item) => (
+                <li>
+                  <a href={item.href} aria-current={current === item.href ? "page" : undefined}>
+                    {item.title}
+                  </a>
+                  {item.children && (
+                    <ul>
+                      {item.children.map((child) => (
+                        <li>
+                          <a
+                            href={child.href}
+                            aria-current={current === child.href ? "page" : undefined}
+                          >
+                            {child.title}
+                          </a>
+                          {child.children && contains(child, current) && (
+                            <ul>
+                              {child.children.map((g) => (
+                                <li>
+                                  <a
+                                    href={g.href}
+                                    aria-current={current === g.href ? "page" : undefined}
+                                  >
+                                    {g.title}
+                                  </a>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </li>
+              ))
+            }
+          </ul>
+        </nav>
+      </aside>
+
+      <main class="main">
+        <slot />
+      </main>
+    </div>
+
+    <script>
+      // モバイルでのメニュー開閉
+      const btn = document.querySelector(".menu-toggle");
+      const menu = document.querySelector(".nav");
+      btn?.addEventListener("click", () => {
+        const open = menu?.classList.toggle("open");
+        btn.setAttribute("aria-expanded", String(open));
+        btn.textContent = open ? "メニューを閉じる" : "メニューを開く";
+      });
+    </script>
+  </body>
+</html>

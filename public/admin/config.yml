@@ -1,0 +1,51 @@
+# ブラウザ編集画面 (Sveltia CMS) の設定
+# localhost で開いた場合は「Work with Local Repository」でローカルのファイルを直接編集できる。
+backend:
+  name: github
+  repo: cassell19-lgtm/my-project
+  branch: main
+
+# ローカル編集モードを有効にする (localhost で開いたときだけ使われる)
+local_backend: true
+
+publish_mode: simple
+locale: ja
+
+media_folder: public/images
+public_folder: /images
+
+collections:
+  - name: top
+    label: トップページ
+    files:
+      - name: index
+        label: トップページ
+        file: content/index.md
+        fields:
+          - { name: title, label: ページ名, widget: string }
+          - { name: atwiki_id, label: 旧wikiのページID, widget: number, required: false }
+          - { name: body, label: 本文, widget: markdown }
+
+  - name: system
+    label: システム
+    folder: content/system
+    extension: md
+    format: frontmatter
+    create: true
+    slug: "{{fields.slug}}"
+    fields:
+      - { name: title, label: ページ名, widget: string }
+      - { name: atwiki_id, label: 旧wikiのページID, widget: number, required: false }
+      - { name: body, label: 本文, widget: markdown }
+
+  - name: seasons
+    label: シリーズ解説
+    folder: content/seasons
+    extension: md
+    format: frontmatter
+    create: true
+    slug: "{{fields.slug}}"
+    fields:
+      - { name: title, label: ページ名, widget: string }
+      - { name: atwiki_id, label: 旧wikiのページID, widget: number, required: false }
+      - { name: body, label: 本文, widget: markdown }
